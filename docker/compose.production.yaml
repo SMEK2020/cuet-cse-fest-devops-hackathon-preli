@@ -4,3 +4,47 @@
   # gateway:
 
   # mongo:
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - private
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      MONGO_DATABASE: ${MONGO_DATABASE}
+    depends_on:
+      - mongo
+    networks:
+      - private
+
+  gateway:
+    build:
+      context: ../gateway
+      dockerfile: Dockerfile
+    environment:
+      BACKEND_URL: http://backend:${BACKEND_PORT}
+    ports:
+      - "5921:5921"
+    depends_on:
+      - backend
+    networks:
+      - private
+
+networks:
+  private:
+
+volumes:
+  mongo_data:

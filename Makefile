@@ -48,3 +48,20 @@
 # Help:
 #   help - Display this help message
 
+dev:
+	docker compose -f docker/compose.development.yaml up --build
+
+dev-down:
+	docker compose -f docker/compose.development.yaml down
+
+prod:
+	docker compose -f docker/compose.production.yaml up --build -d
+
+prod-down:
+	docker compose -f docker/compose.production.yaml down
+
+logs:
+	docker compose -f docker/compose.development.yaml logs -f
+
+clean:
+	docker system prune -af
